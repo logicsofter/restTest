@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:camel="http://camel.apache.org/schema/spring"
+		xmlns:cxf="http://camel.apache.org/schema/cxf"
+		xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+	    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://camel.apache.org/schema/spring
+        http://camel.apache.org/schema/spring/camel-spring.xsd     	  
+        http://camel.apache.org/schema/cxf 
+        http://camel.apache.org/schema/cxf/camel-cxf.xsd
+		">
+
+	<cxf:rsClient id="myRestClient" address="http://localhost:8080/services"
+		serviceClass="com.softlogic.restTest.BetRest" 
+        loggingFeatureEnabled="true" skipFaultLogging="false" />
+	
+	<bean id="clientRoutes" class="com.softlogic.restTest.ClientBetRouter" />
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+			<template id="producerTemplate" />
+	
+		<routeBuilder ref="clientRoutes" />
+	</camelContext>
+	
+</beans>
