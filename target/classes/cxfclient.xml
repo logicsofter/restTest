@@ -4,6 +4,7 @@
 		xmlns:camel="http://camel.apache.org/schema/spring"
 		xmlns:cxf="http://camel.apache.org/schema/cxf"
 		xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+		xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
 		xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -15,6 +16,8 @@
         http://camel.apache.org/schema/cxf/camel-cxf.xsd
  		http://cxf.apache.org/jaxrs
  		http://cxf.apache.org/schemas/jaxrs.xsd
+        http://cxf.apache.org/transports/http/configuration
+        http://cxf.apache.org/schemas/configuration/http-conf.xsd
 ">
 		
 <!-- 	<jaxrs:server id="restService" address="http://localhost:8080/services" staticSubresourceResolution="true" > -->
@@ -34,7 +37,12 @@
 <!-- 			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" /> -->
 <!-- 		</jaxrs:providers> -->
  
-		
+<!-- 	<http-conf:conduit name="http://localhost:8080/*"> -->
+<!--       <http-conf:client  -->
+<!--                       ConnectionTimeout="300000" -->
+<!--                       ReceiveTimeout="300000"/>        -->
+<!-- 	</http-conf:conduit>	 -->
+	
 	<cxf:rsClient id="myRestClient" address="http://localhost:8080/services"
  		serviceClass="com.softlogic.commonRest.BetRest" 
         loggingFeatureEnabled="true" skipFaultLogging="false">

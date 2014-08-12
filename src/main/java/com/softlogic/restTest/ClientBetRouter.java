@@ -30,48 +30,38 @@ public class ClientBetRouter extends RouteBuilder
 	    
 		from("direct:simplePutToRest").to("cxfrs:bean:myRestClient");
 
-		from("direct:simplerPutToRest").marshal().json(JsonLibrary.Gson, Simple.class).to("cxfrs:bean:myRestClient");
-
 		from("direct:putToRest")
         	.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, constant(true))
         	.setHeader(Exchange.HTTP_PATH, simple("/healthCheck/12"))
         	.setHeader(Exchange.HTTP_METHOD, constant("GET"))
         .to("cxfrs:bean:myRestClient");
-		
-		
+			
 		from("direct:postRest")
     		.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, constant(true))
     		.setHeader(Exchange.HTTP_PATH, simple("/sayHello"))
     		.setHeader(Exchange.HTTP_METHOD, constant("POST"))
     	.to("cxfrs:bean:myRestClient");
 
-		from("direct:convert").wireTap("direct:witeError").marshal().json(JsonLibrary.Gson, Simple.class)
-		.wireTap("direct:afterError")
-		.to("stream:out").to("direct:postRest");//.to("direct:simpleProcRest");
-		
-		from("direct:simpleProcRest")
-			.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, constant(true))
-			.setHeader(Exchange.HTTP_PATH, simple("/simpleProc"))
-			.setHeader(Exchange.HTTP_METHOD, constant("POST"))
-			//.setHeader("Content-Type").constant(MediaType.APPLICATION_JSON)
-			//.setHeader("Accept").constant(MediaType.APPLICATION_JSON)
-			//.marshal().json(JsonLibrary.Gson, Simple.class)
-		.to("cxfrs:bean:myRestClient");
-		
+				
 		from("direct:makePaymentRest")
 			.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, constant(true))
 			.setHeader(Exchange.HTTP_PATH, simple("/makePayment"))
 			.setHeader(Exchange.HTTP_METHOD, constant("POST"))
 			.setHeader("Content-Type").constant("application/json")
 			.setHeader("Accept").constant("application/json")
-			.wireTap("direct:witeError")
-			.marshal().json(JsonLibrary.Gson, AccountDetails.class)
-			.wireTap("direct:afterError")
+			.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, constant(AccountResp.class))
 			.log("Request: ${body}")
 		.to("cxfrs:bean:myRestClient");
 
-		from("direct:witeError").beanRef("clientRoutes", "beforeJason");
-		from("direct:afterError").beanRef("clientRoutes", "afterJason");
+		// Some handy debug tricks
+		from("direct:convert").wireTap("direct:witeError").marshal().json(JsonLibrary.Gson, Simple.class)
+		.wireTap("direct:afterError")
+		.to("stream:out").to("direct:postRest");//.to("direct:simpleProcRest");
+
+//		.wireTap("direct:witeError")
+//		.wireTap("direct:afterError")
+//		from("direct:witeError").beanRef("clientRoutes", "beforeJason");
+//		from("direct:afterError").beanRef("clientRoutes", "afterJason");
 //		.marshal().json(JsonLibrary.Gson)
 	}
 	public void beforeJason()
